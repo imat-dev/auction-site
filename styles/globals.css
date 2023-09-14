@@ -1,27 +1,102 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.google.com/specimen/Spline+Sans');
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+	--foreground-rgb: 0, 0, 0;
+	--background-start-rgb: 214, 219, 220;
+	--background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+	:root {
+		--foreground-rgb: 255, 255, 255;
+		--background-start-rgb: 0, 0, 0;
+		--background-end-rgb: 0, 0, 0;
+	}
+}
+
+@layer base {
+	body {
+		@apply text-brown bg-cream;
+	}
+
+	.container {
+		@apply mx-auto px-7
+	}
+
+	h1,
+	.h1 {
+		@apply text-[2.375rem] md:text-[3.75rem];
+		@apply leading-[3.25rem] md:leading-[4.163rem];
+	}
+
+	h2,
+	.h2 {
+		@apply text-[2rem] md:text-[2.25rem];
+		@apply leading-[2.8rem] md:leading-[3.15rem];
+	}
+
+	h3,
+	.h3 {
+		@apply text-[1.5rem] md:text-[1.25rem];
+		@apply leading-[2.25rem] md:leading-[2.25rem];
+	}
+
+	h4,
+	.h4 {
+		@apply text-[1.25rem];
+		@apply leading-[2.25rem] md:leading-[2.25rem];
+	}
+
+	a {
+		@apply text-yellow;
+	}
+
+	/* Buttons */
+
+	.btn-orange {
+		@apply text-[.875rem] transition-colors leading-[1.3125rem] text-white font-semibold bg-orange py-[.625rem] px-[0.9375rem] rounded-[.625rem];
+		@apply hover:bg-yellow;
+	}
+
+	.btn-yellow {
+		@apply text-[.875rem] transition-colors leading-[1.3125rem] text-white font-semibold bg-yellow py-[.625rem] px-[0.9375rem] rounded-[.625rem];
+		@apply hover:bg-orange;
+	}
+
+	.btn-brown {
+		@apply text-[.875rem] transition-colors leading-[1.3125rem] text-white font-semibold bg-brown py-[.625rem] px-[0.9375rem] rounded-[.625rem];
+		@apply hover:bg-orange;
+	}
+
+	.btn-cream {
+		@apply text-[.875rem] transition-colors leading-[1.3125rem] text-brown font-semibold bg-cream py-[.625rem] px-[0.9375rem] rounded-[.625rem];
+		@apply hover:bg-yellow;
+	}
+
+	.btn-pill {
+		@apply inline-block border border-brown transition-colors tracking-[.0375rem] text-brown py-[.25rem] px-[.9375rem] rounded-[3.125rem] bg-white;
+		@apply hover:border-yellow hover:text-yellow
+	}
+
+	.btn-pill-orange {
+		@apply border-2 border-orange text-[0.875rem] font-semibold transition-colors tracking-[0.02625rem] text-orange py-[.35rem] px-[1.5rem] rounded-[3.125rem] bg-white;
+		@apply hover:border-yellow hover:text-yellow
+	}
+
+	.arrow-btn {
+		@apply inline-block w-[7.19px] h-[.875rem] ml-[.5rem] mt-[-1px];
+	}
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+	/* color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
       transparent,
       rgb(var(--background-end-rgb))
     )
-    rgb(var(--background-start-rgb));
+    rgb(var(--background-start-rgb)); */
 }
