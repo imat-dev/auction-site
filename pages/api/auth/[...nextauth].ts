@@ -1,12 +1,20 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import NextAuth from 'next-auth/next';
-import AuthService from '../../../service/auth';
-import axios from 'axios';
-import { NextAuthOptions, RequestInternal, User } from 'next-auth';
+import { Awaitable, NextAuthOptions, RequestInternal } from 'next-auth';
+import { authService } from '@/service/authService';
+
+interface User {
+	id: string;
+	name: string;
+	email: string;
+	token: string;
+}
 
 export const authOptions: NextAuthOptions = {
 	session: {
 		strategy: 'jwt',
+		maxAge: 1 * 60 * 60 * 24 * 30 // 1 month
+
 	},
 	providers: [
 		CredentialsProvider({
@@ -20,27 +28,18 @@ export const authOptions: NextAuthOptions = {
 					RequestInternal,
 					'body' | 'query' | 'headers' | 'method'
 				>
-			) {
-				// const authService = new AuthService();
+			): Promise<User> {
+				const user = await authService.login(
+					credentials.email,
+					credentials.password
+				);
 
-				try {
-					const user = await axios.post(
-						'http://localhost:3000/api/auth/login',
-						{
-							email: credentials.email,
-							password: credentials.password,
-						}
-					);
-
-					return {
-						id: credentials.email,
-						email: credentials.email,
-						name: credentials.email,
-						token: user.data.token,
-					};
-				} catch (error: any) {
-					throw new Error(error.response.data.message);
-				}
+				return {
+					id: credentials.email,
+					email: credentials.email,
+					name: credentials.email,
+					token: user!.data.token,
+				};
 			},
 		}),
 	],

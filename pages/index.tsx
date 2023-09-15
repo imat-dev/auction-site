@@ -1,7 +1,6 @@
 import { getServerSession } from 'next-auth';
 import LoginForm from './components/auth/LoginForm';
 import { GetServerSideProps } from 'next';
-import { getSession } from 'next-auth/react';
 import { authOptions } from './api/auth/[...nextauth]';
 
 export default function Home() {
@@ -12,9 +11,7 @@ export default function Home() {
 	);
 }
 
-
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	//MAKE SURE YOU SET NEXTAUTH_SECRET your environment vars next.config.js
   const session = await getServerSession(context.req, context.res, authOptions);
 
 	if (session) {
