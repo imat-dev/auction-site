@@ -13,7 +13,8 @@ const rules = {
 		)
 		.message('Invalid password format')
 		.required(),
-	isPositiveNumber: Joi.number().min(0.000001)
+	isPositiveNumber: Joi.number().min(0.000001),
+	isMinimumOne : Joi.number().min(1)
 
 };
 
@@ -43,6 +44,10 @@ export const isValidPassword = Joi.object<{ value: string }>({
 
 export const isValidDepositAmount = Joi.object<{ value: string }>({
 	value: rules.isPositiveNumber,
+});
+
+export const isValidWindowTime =  Joi.object<{ value: string }>({
+	value: rules.isMinimumOne,
 });
 
 export default userValidationSchema;

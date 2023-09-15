@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import AuctionItem from './auctionItem';
 import AuctionTableLayout from './auctionTableLayout';
 
-const Auction: React.FC<{ items: Item[] }> = (props) => {
-	const [activeTab, setActiveTab] = useState<string>('ongoing');
+const MyAuction: React.FC<{ items: Item[] }> = (props) => {
+	const [activeTab, setActiveTab] = useState<string>('draft');
+
+	const draftItem = props.items.filter((item) => item.status === 'draft');
 
 	const publisedItem = props.items.filter(
 		(item) => item.status === 'published'
@@ -18,6 +20,18 @@ const Auction: React.FC<{ items: Item[] }> = (props) => {
 		<div className="mb-[5rem]">
 			<div className="flex">
 				<ul className="flex gap-10">
+					<li>
+						<button
+							className={`text-xl font-bold ${
+								activeTab === 'draft'
+									? 'btn-orange'
+									: 'btn-brown'
+							}`}
+							onClick={() => setActiveTab('draft')}
+						>
+							Draft
+						</button>
+					</li>
 					<li>
 						<button
 							className={`text-xl font-bold ${
@@ -47,6 +61,14 @@ const Auction: React.FC<{ items: Item[] }> = (props) => {
 
 			<hr className="h-px my-8 bg-orange border-0" />
 
+			{activeTab === 'draft' && (
+				<AuctionTableLayout>
+					{draftItem.map((item) => (
+						<AuctionItem key={item.id} item={item} />
+					))}
+				</AuctionTableLayout>
+			)}
+
 			{activeTab === 'ongoing' && (
 				<AuctionTableLayout>
 					{publisedItem.map((item) => (
@@ -66,4 +88,4 @@ const Auction: React.FC<{ items: Item[] }> = (props) => {
 	);
 };
 
-export default Auction;
+export default MyAuction;

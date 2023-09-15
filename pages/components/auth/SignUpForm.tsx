@@ -1,5 +1,5 @@
 import useInput from '@/hooks/useInput';
-import { authService } from '@/service/auth';
+import { authService } from '@/service/authService';
 import { isEmail, isValidPassword } from '@/util/validationSchema';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';

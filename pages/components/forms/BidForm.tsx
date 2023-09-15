@@ -1,21 +1,23 @@
 import useInput from '@/hooks/useInput';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { isValidDepositAmount } from '@/util/validationSchema';
 import { depositService } from '@/service/depositService';
 import { useDispatch, useSelector } from 'react-redux';
 import { userActions } from '@/store/userSlice';
 import { RootState } from '@/store';
+import { Bid, Item } from '@/model/auction';
+import { bidService } from '@/service/bidService';
 
-const DepositForm = () => {
+const BidForm: React.FC<{ item: Item }> = (props) => {
 	const [formErrorMsg, setFormErrorMsg] = useState<string | null>(null);
 	const [showSuccess, setShowSuccess] = useState(false);
-	const [isDepositing, setIsDepositing] = useState<boolean>(false);
+	const [isBidding, setIsBidding] = useState<boolean>(false);
+	const [currentBid, setCurrentBid] = useState<Bid>();
+
 	const { data: session, status } = useSession();
 	const dispatch = useDispatch();
-
-	const balance = useSelector( ( state : RootState) => state.user.balance )
-
+	const balance = useSelector((state: RootState) => state.user.balance);
 	const showFormError = formErrorMsg !== '';
 
 	const {
@@ -24,12 +26,15 @@ const DepositForm = () => {
 		inputHasError: amountInputError,
 		inputChangeHandler: amountChangeHandler,
 		inputBlurHandler: amountBlurHandler,
-		resetInput : resetAmount
+		resetInput: resetAmount,
 	} = useInput((value) => {
 		const validation = isValidDepositAmount.validate({
 			value: parseFloat(value),
 		});
 		if (validation.error) {
+			return false;
+		}
+		if (parseFloat(value) <= props.item.highestBid) {
 			return false;
 		}
 		return true;
@@ -40,51 +45,87 @@ const DepositForm = () => {
 		formIsValid = true;
 	}
 
-	const depositHandler = async (event: React.FormEvent) => {
+	const bidHandler = async (event: React.FormEvent) => {
 		event.preventDefault();
 
 		setFormErrorMsg('');
-		setIsDepositing(true);
+		setIsBidding(true);
 
 		try {
 			const token = (session?.user as any).token;
-			const result = await depositService.deposit(enteredAmount, token);
+
+			let result;
+			console.log(currentBid);
+			if (currentBid) {
+				result = await bidService.updateBid(
+					props.item.id,
+					enteredAmount,
+					token
+				);
+			} else {
+				result = await bidService.placeBid(
+					props.item.id,
+					enteredAmount,
+					token
+				);
+			}
 
 			if (result) {
 				setShowSuccess(true);
 
-				dispatch(
-					userActions.updateBalance({ balance: result.balance })
-				);
-
-				// hide the success message after 5 seconds
 				setTimeout(() => {
 					setShowSuccess(false);
 				}, 5000);
 
-				resetAmount()
+				resetAmount();
 			}
 		} catch (error: any) {
-			setIsDepositing(false);
+			setIsBidding(false);
 			setFormErrorMsg(error.message);
 		}
 
-		setIsDepositing(false);
+		setIsBidding(false);
 	};
+
+	useEffect(() => {
+		const fetchCurrentBid = async () => {
+			const token = (session?.user as any).token;
+
+			try {
+				const currentBid = await bidService.getCurrentBidOnItem(
+					props.item.id,
+					token
+				);
+				setCurrentBid(currentBid);
+			} catch (error: any) {}
+		};
+
+		fetchCurrentBid();
+	}, []);
 
 	return (
 		<div className="w-full">
-			<h1 className="text-left font-bold text-4xl mb-5">Deposit</h1>
-			<form onSubmit={depositHandler} className="">
+			<h1 className="text-left font-bold text-4xl mb-5">
+				{props.item.name} (${props.item.highestBid})
+			</h1>
+			{currentBid && (
+				<h2 className="text-left font-bold text-2xl mb-5">
+					Your Bid: ${currentBid.bidAmount}
+				</h2>
+			)}
+
+			<form onSubmit={bidHandler} className="">
 				{showFormError && (
 					<p className="text-red-500 text-md italic mb-2">
 						{formErrorMsg}
 					</p>
 				)}
 
-				{showSuccess && <p className="text-green-500 text-md italic mb-2">
-						Your new balance is : ${balance}
-					</p>}
+				{showSuccess && (
+					<p className="text-green-500 text-md italic mb-2">
+						Updated Succesfully.
+					</p>
+				)}
 
 				<div className="mb-4">
 					<label
@@ -102,11 +143,11 @@ const DepositForm = () => {
 						value={enteredAmount}
 						onChange={amountChangeHandler}
 						onBlur={amountBlurHandler}
-						placeholder="Amount to deposit"
+						placeholder="Amount to bid"
 					/>
 					{amountInputError && (
 						<p className="text-red-500 text-xs italic mt-2">
-							Amount should be greater than 0.
+							Amount should be higher than the highest bid.
 						</p>
 					)}
 				</div>
@@ -117,7 +158,7 @@ const DepositForm = () => {
 						type="submit"
 						disabled={!formIsValid}
 					>
-						{isDepositing ? 'Loading...' : 'Deposit'}
+						{isBidding ? 'Loading...' : 'Bid'}
 					</button>
 				</div>
 			</form>
@@ -125,4 +166,4 @@ const DepositForm = () => {
 	);
 };
 
-export default DepositForm;
+export default BidForm;

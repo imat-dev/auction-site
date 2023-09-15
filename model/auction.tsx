@@ -16,3 +16,11 @@ export interface Item {
 	owner: User;
 	highestBidder: User;
 }
+
+export interface Bid {
+    id: number;
+    bidAmount: number;
+    dateCreated: Date; 
+    dateUpdated: Date; 
+    isRefunded: boolean;
+} 

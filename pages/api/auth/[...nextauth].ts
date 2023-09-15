@@ -1,7 +1,7 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import NextAuth from 'next-auth/next';
 import { Awaitable, NextAuthOptions, RequestInternal } from 'next-auth';
-import { authService } from '@/service/auth';
+import { authService } from '@/service/authService';
 
 interface User {
 	id: string;
@@ -13,7 +13,7 @@ interface User {
 export const authOptions: NextAuthOptions = {
 	session: {
 		strategy: 'jwt',
-		maxAge: 1 * 60 * 60 // 1 hour
+		maxAge: 1 * 60 * 60 * 24 * 30 // 1 month
 
 	},
 	providers: [

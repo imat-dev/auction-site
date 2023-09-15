@@ -16,15 +16,18 @@ const Balance = () => {
 		const fetchUser = async () => {
 			const token = (session?.user as any).token;
 
-			const { data } = await apiClient.get('auth/profile', {
-				headers: { Authorization: `Bearer ${token}` },
-			});
+			try {
 
-			console.log(data);
+				const { data } = await apiClient.get('auth/profile', {
+					headers: { Authorization: `Bearer ${token}` },
+				});
+				const user: User = data;
 
-			const user: User = data;
+				dispatch(userActions.setUser({ balance: user.balance, email : user.email }));
+			} catch (e) {
+				console.log(e)
+			}
 
-			dispatch(userActions.setBalance({ balance: user.balance, email : user.email }));
 		};
 		fetchUser();
 	}, []);

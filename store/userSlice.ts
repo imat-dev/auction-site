@@ -14,7 +14,7 @@ const userSlice = createSlice({
 	name: 'cart',
 	initialState: initialState,
 	reducers: {
-		setBalance: (state, action: PayloadAction<User>) => {
+		setUser: (state, action: PayloadAction<User>) => {
 			state.balance = action.payload.balance;
 			state.email = action.payload.email;
 		},
