@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import DropdownMenu from './DropdownMenu';
+import Balance from '../user/Balance';
 
 const MainNavigation = () => {
 	const session = useSession();
@@ -16,10 +18,8 @@ const MainNavigation = () => {
 						</Link>
 						{session.status === 'authenticated' && (
 							<motion.div className="flex items-center gap-2 cursor-pointer">
-								<h3 className="font-bold btn-pill text-lg">
-									B: $100
-								</h3>
-								<button className="btn-brown">Hi, User</button>
+								<Balance />
+								<DropdownMenu />
 							</motion.div>
 						)}
 					</div>

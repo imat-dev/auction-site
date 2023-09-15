@@ -2,7 +2,6 @@ import { getServerSession } from 'next-auth';
 import LoginForm from './components/auth/LoginForm';
 import { GetServerSideProps } from 'next';
 import { authOptions } from './api/auth/[...nextauth]';
-import SignUpForm from './components/auth/SignUpForm';
 
 export default function Home() {
 	return (
