@@ -1,16 +1,16 @@
-import useInput from "@/hooks/useInput";
-import User, { IUser } from "@/model/user";
-import { isEmail, isNotEmpty, isValidPassword } from "@/util/validationSchema";
-import axios from "axios";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import useInput from '@/hooks/useInput';
+import { authService } from '@/service/auth';
+import { isEmail, isValidPassword } from '@/util/validationSchema';
+import { signIn } from 'next-auth/react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 const SignUpForm = () => {
-	const [formErrorMsg, setFormErrorMsg] = useState("");
-	const showFormError = formErrorMsg !== "";
+	const [formErrorMsg, setFormErrorMsg] = useState('');
+	const showFormError = formErrorMsg !== '';
 	const [isRegistering, setIsRegistering] = useState(false);
-	const router = useRouter()
+	const router = useRouter();
 
 	const {
 		enteredValue: enteredEmail,
@@ -27,41 +27,13 @@ const SignUpForm = () => {
 	});
 
 	const {
-		enteredValue: enteredFirstName,
-		isValid: firstNameIsValid,
-		inputHasError: firstNameInputError,
-		inputChangeHandler: firstNameChangeHandler,
-		inputBlurHandler: firstNameBlurHandler,
-	} = useInput((value) => {
-		const validation = isNotEmpty.validate({value : value});
-		if (validation.error) {
-			return false;
-		}
-		return true;
-	});
-
-	const {
-		enteredValue: enteredLastName,
-		isValid: lastNameIsValid,
-		inputHasError: lastNameInputError,
-		inputChangeHandler: lastNameChangeHandler,
-		inputBlurHandler: lastNameBlurHandler,
-	} = useInput((value) => {
-		const validation = isNotEmpty.validate({value : value});
-		if (validation.error) {
-			return false;
-		}
-		return true;
-	});
-
-	const {
 		enteredValue: enteredPassword,
 		isValid: passwordIsValid,
 		inputHasError: passwordInputError,
 		inputChangeHandler: passwordChangeHandler,
 		inputBlurHandler: passwordBlurHandler,
 	} = useInput((value) => {
-		const validation = isValidPassword.validate({value : value});
+		const validation = isValidPassword.validate({ value: value });
 		if (validation.error) {
 			return false;
 		}
@@ -69,12 +41,7 @@ const SignUpForm = () => {
 	});
 
 	let formIsValid = false;
-	if (
-		emailIsValid &&
-		firstNameIsValid &&
-		lastNameIsValid &&
-		passwordIsValid
-	) {
+	if (emailIsValid && passwordIsValid) {
 		formIsValid = true;
 	}
 
@@ -89,39 +56,35 @@ const SignUpForm = () => {
 			return;
 		}
 
-		const newUser: IUser = {
-			email: enteredEmail,
-			password: enteredPassword,
-			firstName: enteredFirstName,
-			lastName: enteredLastName,
-		};
-
 		setIsRegistering(true);
 		try {
-			const result = await axios.post("/api/auth/signup", newUser);
+			const user = await authService.register(
+				enteredEmail,
+				enteredPassword
+			);
 
-			if(result) {
-				
-				await signIn("credentials", {
+			if (user) {
+				await signIn('credentials', {
 					redirect: false,
 					email: enteredEmail,
 					password: enteredPassword,
 				});
 
-				router.replace("/");
+				router.replace('/auction');
 			}
 		} catch (error: any) {
 			setIsRegistering(false);
-			setFormErrorMsg(error.response.data.message);
+			setFormErrorMsg(error.message);
 		}
+
 		setIsRegistering(false);
 	};
 
 	return (
 		<div className="h-full flex justify-center">
-			<div className="w-full max-w-xs mt-20">
-				<h1 className="text-blue-500 text-center font-bold text-4xl mb-5">
-					Register
+			<div className="w-full max-w-md">
+				<h1 className="text-brown text-center font-bold text-4xl mb-5">
+					Sign Up
 				</h1>
 				<form
 					onSubmit={submitFormHandler}
@@ -142,7 +105,7 @@ const SignUpForm = () => {
 						</label>
 						<input
 							className={`${
-								emailInputError ? "border-red-500" : ""
+								emailInputError ? 'border-red-500' : ''
 							} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
 							id="email"
 							type="email"
@@ -157,54 +120,7 @@ const SignUpForm = () => {
 							</p>
 						)}
 					</div>
-					<div className="mb-4">
-						<label
-							className="block text-gray-700 text-sm font-bold mb-2"
-							htmlFor="username"
-						>
-							First Name
-						</label>
-						<input
-							className={`${
-								firstNameInputError ? "border-red-500" : ""
-							} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-							id="first_name"
-							type="text"
-							value={enteredFirstName}
-							onChange={firstNameChangeHandler}
-							onBlur={firstNameBlurHandler}
-							placeholder="First Name"
-						/>
-						{firstNameInputError && (
-							<p className="text-red-500 text-xs italic mt-2">
-								First name is a required field.
-							</p>
-						)}
-					</div>
-					<div className="mb-4">
-						<label
-							className="block text-gray-700 text-sm font-bold mb-2"
-							htmlFor="lastname"
-						>
-							Last Name
-						</label>
-						<input
-							className={`${
-								lastNameInputError ? "border-red-500" : ""
-							} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-							id="last_name"
-							type="text"
-							value={enteredLastName}
-							onChange={lastNameChangeHandler}
-							onBlur={lastNameBlurHandler}
-							placeholder="Last Name"
-						/>
-						{lastNameInputError && (
-							<p className="text-red-500 text-xs italic mt-2">
-								Last name is a required field.
-							</p>
-						)}
-					</div>
+
 					<div className="mb-6">
 						<label
 							className="block text-gray-700 text-sm font-bold mb-2"
@@ -214,7 +130,7 @@ const SignUpForm = () => {
 						</label>
 						<input
 							className={`${
-								passwordInputError ? "border-red-500" : ""
+								passwordInputError ? 'border-red-500' : ''
 							} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
 							id="password"
 							type="password"
@@ -232,19 +148,19 @@ const SignUpForm = () => {
 					</div>
 					<div className="flex items-center justify-between">
 						<button
-							className="bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+							className="bg-yellow disabled:cursor-not-allowed disabled:bg-gray-500 hover:bg-orange text-white font-bold py-2 px-10 rounded focus:outline-none focus:shadow-outline"
 							type="submit"
 							disabled={!formIsValid}
 						>
-							{isRegistering ? "Loading..." : "Sign Up"}
+							{isRegistering ? 'Loading...' : 'Sign Up'}
 						</button>
 
-						<a
-							className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-							href="#"
+						<Link
+							href="/"
+							className="inline-block align-baseline font-bold text-sm text-orange hover:text-orange-800"
 						>
-							Forgot Password?
-						</a>
+							Back to Sign In
+						</Link>
 					</div>
 				</form>
 			</div>
