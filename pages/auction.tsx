@@ -11,7 +11,7 @@ import { auctionItemActions } from '@/store/auctionItemSlice';
 import { RootState } from '@/store';
 import Error from './components/ui/Error';
 
-const AuctionPage: React.FC<{ items: Item[] }> = (props) => {
+const AuctionPage: React.FC = (props) => {
 	const { data: session, status } = useSession();
 	const dispatch = useDispatch();
 	const [showError, setShowError] = useState<boolean>(false);
@@ -19,18 +19,30 @@ const AuctionPage: React.FC<{ items: Item[] }> = (props) => {
 		(state: RootState) => state.auctionItem.items
 	);
 
+	const isFirstFetched = useSelector(
+		(state: RootState) => state.auctionItem.isFirstFetched
+	);
+
+	const fetchItems = async () => {
+		if (status === 'authenticated') {
+			const token = (session!.user as any).token;
+			try {
+				const items = await auctionService.getAllAuctions(token);
+				dispatch(auctionItemActions.fillItems({ items: items }));
+				setShowError(false);
+			} catch (error: any) {
+				setShowError(true);
+			}
+		}
+	};
+
+	if (isFirstFetched) {
+		fetchItems();
+	}
+
 	useEffect(() => {
 		const interval = setInterval(async () => {
-			if (status === 'authenticated') {
-				const token = (session!.user as any).token;
-				try {
-					const items = await auctionService.getAllAuctions(token);
-					dispatch(auctionItemActions.fillItems({ items: items }));
-					setShowError(false);
-				} catch (error: any) {
-					setShowError(true);
-				}
-			}
+			fetchItems();
 		}, 2000);
 
 		return () => {
@@ -38,15 +50,13 @@ const AuctionPage: React.FC<{ items: Item[] }> = (props) => {
 		};
 	}, [status, dispatch]);
 
-	if(showError) {
-		return (<Error />)
+	if (showError) {
+		return <Error />;
 	}
 
 	return (
 		<section className="container mx-auto" suppressHydrationWarning>
-			{/* do this to avoid hydration error */}
-			{itemsState.length === 0 && <Auction items={props.items} />}
-			{itemsState.length > 1 && <Auction items={itemsState} />}
+			<Auction items={itemsState} />
 		</section>
 	);
 };
@@ -67,25 +77,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		};
 	}
 
-	try {
-		const token = (session.user as any).token;
-		const items = await auctionService.getAllAuctions(token);
-
-		return {
-			props: {
-				items: items,
-			},
-		};
-	} catch (error: any) {
-		// console.log(error)
-		const items: Item[] = [];
-		return {
-			props: {
-				items: items,
-				error: { message: error!.message },
-			},
-		};
-	}
+	return {
+		props: {},
+	};
 };
 
 export default AuctionPage;

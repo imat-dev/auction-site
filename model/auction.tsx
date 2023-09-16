@@ -11,6 +11,7 @@ export interface Item {
 	windowTime: number;
 	status: 'published' | 'draft' | 'completed';
 	highestBid: number;
+	dateCreated: Date;
 	// highestBidder: User;
 }
 
