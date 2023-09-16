@@ -220,12 +220,14 @@ const AddItemForm = () => {
 
 				<div className="flex items-center justify-between">
 					<button
-						className="bg-orange disabled:cursor-not-allowed disabled:bg-gray-500 hover:bg-brown text-white font-bold py-2 px-10 rounded focus:outline-none focus:shadow-outline"
+						className="bg-orange disabled:cursor-not-allowed disabled:bg-gray-500 hover:bg-brown text-white font-bold py-2 px-10 rounded  focus:outline-none focus:shadow-outline"
 						type="submit"
 						disabled={!formIsValid}
 					>
 						{isDepositing ? 'Loading...' : 'Draft Item'}
 					</button>
+
+					<button type="button" className='btn-yellow font-bold py-2 px-10 rounded' onClick={(()=>{ dispatch(uiActions.toggleModal()) })}>Cancel</button>
 				</div>
 			</form>
 		</div>

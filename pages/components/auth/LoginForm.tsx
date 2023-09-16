@@ -1,9 +1,8 @@
 import useInput from '@/hooks/useInput';
 import { isEmail, isNotEmpty } from '@/util/validationSchema';
 import { useState } from 'react';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
 import Link from 'next/link';
 
 const LoginForm = () => {

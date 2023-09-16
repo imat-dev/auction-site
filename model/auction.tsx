@@ -11,10 +11,7 @@ export interface Item {
 	windowTime: number;
 	status: 'published' | 'draft' | 'completed';
 	highestBid: number;
-	refundJobId: string;
-	isRefundJobCompleted: boolean;
-	owner: User;
-	highestBidder: User;
+	// highestBidder: User;
 }
 
 export interface Bid {

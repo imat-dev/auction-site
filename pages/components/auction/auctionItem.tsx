@@ -10,12 +10,14 @@ import Modal from '../ui/Modal';
 const AuctionItem: React.FC<{ item: Item }> = (props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 
+	const closeModalHandler = () => {
+		setShowModal(false);
+	};
+
 	return (
 		<ul className="flex border-b border-gray-300 py-4">
 			<li className="flex-1">{props.item.name}</li>
-			<li className="flex-1">
-				${props.item.highestBid}
-			</li>
+			<li className="flex-1">${props.item.highestBid}</li>
 			<li className="flex-1">{props.item.windowTime}hr(s)</li>
 			<li className="flex-1">
 				{props.item.status === 'draft' && (
@@ -38,7 +40,10 @@ const AuctionItem: React.FC<{ item: Item }> = (props) => {
 								isOpen={showModal}
 								onClose={() => setShowModal(false)}
 							>
-								<BidForm item={props.item} />
+								<BidForm
+									item={props.item}
+									onCloseModal={closeModalHandler}
+								/>
 							</Modal>
 						)}
 					</>
