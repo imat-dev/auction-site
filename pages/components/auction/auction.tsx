@@ -49,6 +49,7 @@ const Auction: React.FC<{ items: Item[] }> = (props) => {
 
 			{activeTab === 'ongoing' && (
 				<AuctionTableLayout>
+					{!publisedItem.length && <p>No records found.</p>}
 					{publisedItem.map((item) => (
 						<AuctionItem key={item.id} item={item} />
 					))}
@@ -57,6 +58,7 @@ const Auction: React.FC<{ items: Item[] }> = (props) => {
 
 			{activeTab === 'completed' && (
 				<AuctionTableLayout>
+					{!completedItem.length && <p>No records found.</p>}
 					{completedItem.map((item) => (
 						<AuctionItem key={item.id} item={item} />
 					))}

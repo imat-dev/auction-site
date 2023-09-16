@@ -56,6 +56,7 @@ const AuctionPage: React.FC = (props) => {
 
 	return (
 		<section className="container mx-auto" suppressHydrationWarning>
+			<h1 className='h2 mb-5'>Public Auction</h1>
 			<Auction items={itemsState} />
 		</section>
 	);
