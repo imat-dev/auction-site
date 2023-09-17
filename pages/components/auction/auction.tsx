@@ -2,9 +2,11 @@ import { Item } from '@/model/auction';
 import React, { useState } from 'react';
 import AuctionItem from './auctionItem';
 import AuctionTableLayout from './auctionTableLayout';
+import { useSession } from 'next-auth/react';
 
-const Auction: React.FC<{ items: Item[] }> = (props) => {
+const Auction: React.FC<{ items: Item[], isLoading: boolean }> = (props) => {
 	const [activeTab, setActiveTab] = useState<string>('ongoing');
+	const { data: session, status } = useSession();
 
 	const publisedItem = props.items.filter(
 		(item) => item.status === 'published'
@@ -49,7 +51,8 @@ const Auction: React.FC<{ items: Item[] }> = (props) => {
 
 			{activeTab === 'ongoing' && (
 				<AuctionTableLayout>
-					{!publisedItem.length && <p>No records found.</p>}
+					{props.isLoading && !publisedItem.length && <p>Loading records...</p>}
+					{!publisedItem.length && !props.isLoading && <p>No records found.</p>}
 					{publisedItem.map((item) => (
 						<AuctionItem key={item.id} item={item} />
 					))}
@@ -58,7 +61,8 @@ const Auction: React.FC<{ items: Item[] }> = (props) => {
 
 			{activeTab === 'completed' && (
 				<AuctionTableLayout>
-					{!completedItem.length && <p>No records found.</p>}
+					{props.isLoading && !completedItem.length && <p>Loading records...</p>}
+					{!completedItem.length && !props.isLoading && <p>No records found.</p>}
 					{completedItem.map((item) => (
 						<AuctionItem key={item.id} item={item} />
 					))}

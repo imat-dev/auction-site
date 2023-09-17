@@ -102,7 +102,7 @@ const BidForm: React.FC<{ item: Item; onCloseModal: any }> = (props) => {
 		};
 
 		fetchCurrentBid();
-	}, [currentBid]);
+	}, [currentBid, props.item.id]);
 
 	return (
 		<div className="w-full">
