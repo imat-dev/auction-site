@@ -2,22 +2,19 @@ import useInput from '@/hooks/useInput';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { isValidDepositAmount } from '@/util/validationSchema';
-import { depositService } from '@/service/depositService';
 import { useDispatch, useSelector } from 'react-redux';
-import { userActions } from '@/store/userSlice';
 import { RootState } from '@/store';
 import { Bid, Item } from '@/model/auction';
 import { bidService } from '@/service/bidService';
+import { userActions } from '@/store/userSlice';
 
-const BidForm: React.FC<{ item: Item }> = (props) => {
+const BidForm: React.FC<{ item: Item; onCloseModal: any }> = (props) => {
 	const [formErrorMsg, setFormErrorMsg] = useState<string | null>(null);
 	const [showSuccess, setShowSuccess] = useState(false);
 	const [isBidding, setIsBidding] = useState<boolean>(false);
 	const [currentBid, setCurrentBid] = useState<Bid>();
-
-	const { data: session, status } = useSession();
 	const dispatch = useDispatch();
-	const balance = useSelector((state: RootState) => state.user.balance);
+	const { data: session, status } = useSession();
 	const showFormError = formErrorMsg !== '';
 
 	const {
@@ -55,7 +52,6 @@ const BidForm: React.FC<{ item: Item }> = (props) => {
 			const token = (session?.user as any).token;
 
 			let result;
-			console.log(currentBid);
 			if (currentBid) {
 				result = await bidService.updateBid(
 					props.item.id,
@@ -72,6 +68,12 @@ const BidForm: React.FC<{ item: Item }> = (props) => {
 
 			if (result) {
 				setShowSuccess(true);
+
+				dispatch(
+					userActions.updateBalance({
+						balance: result.updatedBalance,
+					})
+				);
 
 				setTimeout(() => {
 					setShowSuccess(false);
@@ -90,7 +92,6 @@ const BidForm: React.FC<{ item: Item }> = (props) => {
 	useEffect(() => {
 		const fetchCurrentBid = async () => {
 			const token = (session?.user as any).token;
-
 			try {
 				const currentBid = await bidService.getCurrentBidOnItem(
 					props.item.id,
@@ -101,7 +102,7 @@ const BidForm: React.FC<{ item: Item }> = (props) => {
 		};
 
 		fetchCurrentBid();
-	}, []);
+	}, [currentBid]);
 
 	return (
 		<div className="w-full">
@@ -159,6 +160,16 @@ const BidForm: React.FC<{ item: Item }> = (props) => {
 						disabled={!formIsValid}
 					>
 						{isBidding ? 'Loading...' : 'Bid'}
+					</button>
+
+					<button
+						type="button"
+						className="btn-yellow font-bold py-2 px-10 rounded"
+						onClick={() => {
+							props.onCloseModal();
+						}}
+					>
+						Cancel
 					</button>
 				</div>
 			</form>

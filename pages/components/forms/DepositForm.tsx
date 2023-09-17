@@ -6,6 +6,7 @@ import { depositService } from '@/service/depositService';
 import { useDispatch, useSelector } from 'react-redux';
 import { userActions } from '@/store/userSlice';
 import { RootState } from '@/store';
+import { uiActions } from '@/store/uiSlice';
 
 const DepositForm = () => {
 	const [formErrorMsg, setFormErrorMsg] = useState<string | null>(null);
@@ -119,6 +120,7 @@ const DepositForm = () => {
 					>
 						{isDepositing ? 'Loading...' : 'Deposit'}
 					</button>
+					<button type="button" className='btn-yellow font-bold py-2 px-10 rounded' onClick={(()=>{ dispatch(uiActions.toggleModal()) })}>Cancel</button>
 				</div>
 			</form>
 		</div>

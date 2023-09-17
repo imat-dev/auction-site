@@ -3,31 +3,61 @@ import { getServerSession } from 'next-auth';
 import React, { useEffect, useState } from 'react';
 import { authOptions } from './api/auth/[...nextauth]';
 import Auction from './components/auction/auction';
-import apiClient from '@/util/axiosInstance';
 import { Item } from '@/model/auction';
 import { auctionService } from '@/service/auctionService';
 import { useSession } from 'next-auth/react';
+import { useDispatch, useSelector } from 'react-redux';
+import { auctionItemActions } from '@/store/auctionItemSlice';
+import { RootState } from '@/store';
+import Error from './components/ui/Error';
 
-const AuctionPage: React.FC<{ items: Item[] }> = (props) => {
+const AuctionPage: React.FC = (props) => {
 	const { data: session, status } = useSession();
-	
-	const [items, setItems] = useState<Item[]>(props.items)
+	const dispatch = useDispatch();
+	const [showError, setShowError] = useState<boolean>(false);
+	const itemsState = useSelector(
+		(state: RootState) => state.auctionItem.items
+	);
+
+	const isFirstFetched = useSelector(
+		(state: RootState) => state.auctionItem.isFirstFetched
+	);
+
+	const fetchItems = async () => {
+		if (status === 'authenticated') {
+			const token = (session!.user as any).token;
+			try {
+				const items = await auctionService.getAllAuctions(token);
+				dispatch(auctionItemActions.fillItems({ items: items }));
+				setShowError(false);
+			} catch (error: any) {
+				setShowError(true);
+			}
+		}
+	};
+
+	if (isFirstFetched) {
+		fetchItems();
+	}
 
 	useEffect(() => {
-		const interval = setInterval( async () => {
-			if(status === 'authenticated') {
-				const token = (session!.user as any).token;
-				const items = await auctionService.getAllAuctions(token);
-				setItems(items)
-			}
-		}, 5000);
+		const interval = setInterval(async () => {
+			fetchItems();
+		}, 2000);
 
-		return () => clearInterval(interval);
-	}, [status]);
+		return () => {
+			clearInterval(interval);
+		};
+	}, [status, dispatch]);
+
+	if (showError) {
+		return <Error />;
+	}
 
 	return (
-		<section className="container mx-auto">
-			<Auction items={items} />
+		<section className="container mx-auto" suppressHydrationWarning>
+			<h1 className='h2 mb-5'>Public Auction</h1>
+			<Auction items={itemsState} />
 		</section>
 	);
 };
@@ -48,25 +78,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		};
 	}
 
-	try {
-		const token = (session.user as any).token;
-		const items = await auctionService.getAllAuctions(token);
-
-		return {
-			props: {
-				items: items,
-			},
-		};
-	} catch (error: any) {
-		// console.log(error)
-		const items: Item[] = [];
-		return {
-			props: {
-				items: items,
-				error: { message: error!.message },
-			},
-		};
-	}
+	return {
+		props: {},
+	};
 };
 
 export default AuctionPage;

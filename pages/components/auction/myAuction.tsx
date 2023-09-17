@@ -2,6 +2,7 @@ import { Item } from '@/model/auction';
 import React, { useState } from 'react';
 import AuctionItem from './auctionItem';
 import AuctionTableLayout from './auctionTableLayout';
+import Link from 'next/link';
 
 const MyAuction: React.FC<{ items: Item[] }> = (props) => {
 	const [activeTab, setActiveTab] = useState<string>('draft');
@@ -19,7 +20,7 @@ const MyAuction: React.FC<{ items: Item[] }> = (props) => {
 	return (
 		<div className="mb-[5rem]">
 			<div className="flex">
-				<ul className="flex gap-10">
+				<ul className="flex gap-10 flex-wrap items-end">
 					<li>
 						<button
 							className={`text-xl font-bold ${
@@ -55,6 +56,9 @@ const MyAuction: React.FC<{ items: Item[] }> = (props) => {
 						>
 							Completed
 						</button>
+					</li>
+					<li>
+						<Link href="/auction" className='text-orange underline'>Go to Public Auction</Link>
 					</li>
 				</ul>
 			</div>

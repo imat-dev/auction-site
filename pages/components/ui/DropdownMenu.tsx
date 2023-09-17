@@ -6,7 +6,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from './DropdownElements';
 import { signOut } from 'next-auth/react';
 import Modal from './Modal';
 import DepositForm from '../forms/DepositForm';
@@ -43,14 +43,14 @@ const DropdownMenu = () => {
 			<DropdownMenuContent>
 				<DropdownMenuLabel>My Account</DropdownMenuLabel>
 				<DropdownMenuSeparator />
+				<DropdownMenuItem onClick={depositModalHandler}>
+					Deposit
+				</DropdownMenuItem>
 				<DropdownMenuItem onClick={addItemModalHandler}>
 					Create Item
 				</DropdownMenuItem>
 				<DropdownMenuItem onClick={() => { router.push('/my-items') }}>
 					My Items
-				</DropdownMenuItem>
-				<DropdownMenuItem onClick={depositModalHandler}>
-					Deposit
 				</DropdownMenuItem>
 				<DropdownMenuItem onClick={logoutHandler}>
 					Logout

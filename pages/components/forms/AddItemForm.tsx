@@ -17,9 +17,9 @@ const AddItemForm = () => {
 	const [showSuccess, setShowSuccess] = useState(false);
 	const [isDepositing, setIsDepositing] = useState<boolean>(false);
 	const { data: session, status } = useSession();
-	const dispatch = useDispatch()
+	const dispatch = useDispatch();
 	const showFormError = formErrorMsg !== '';
-	const router = useRouter()
+	const router = useRouter();
 
 	const {
 		enteredValue: enteredStartingPrice,
@@ -104,7 +104,7 @@ const AddItemForm = () => {
 
 				resetStartingPrice();
 				resetName();
-				resetTime()
+				resetTime();
 			}
 		} catch (error: any) {
 			setIsDepositing(false);
@@ -116,8 +116,8 @@ const AddItemForm = () => {
 
 	const viewItemsHandler = () => {
 		router.push('/my-items');
-		dispatch(uiActions.toggleModal())
-	}
+		dispatch(uiActions.toggleModal());
+	};
 
 	return (
 		<div className="w-full">
@@ -130,13 +130,13 @@ const AddItemForm = () => {
 				)}
 
 				{showSuccess && (
-					<div className='flex gap-5'>
+					<div className="flex gap-5">
 						<p className="text-green-500 text-md italic mb-2">
 							Success adding new item.
 						</p>
 						<button
 							onClick={viewItemsHandler}
-							className="text-green-500 italic underline"
+							className="text-orange font-bold italic underline"
 						>
 							View Your Items.
 						</button>
@@ -220,11 +220,21 @@ const AddItemForm = () => {
 
 				<div className="flex items-center justify-between">
 					<button
-						className="bg-orange disabled:cursor-not-allowed disabled:bg-gray-500 hover:bg-brown text-white font-bold py-2 px-10 rounded focus:outline-none focus:shadow-outline"
+						className="bg-orange disabled:cursor-not-allowed disabled:bg-gray-500 hover:bg-brown text-white font-bold py-2 px-10 rounded  focus:outline-none focus:shadow-outline"
 						type="submit"
 						disabled={!formIsValid}
 					>
 						{isDepositing ? 'Loading...' : 'Draft Item'}
+					</button>
+
+					<button
+						type="button"
+						className="btn-yellow font-bold py-2 px-10 rounded"
+						onClick={() => {
+							dispatch(uiActions.toggleModal());
+						}}
+					>
+						Cancel
 					</button>
 				</div>
 			</form>
