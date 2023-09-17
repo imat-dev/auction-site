@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth';
 import React, { useEffect, useState } from 'react';
 import { authOptions } from './api/auth/[...nextauth]';
 import Auction from './components/auction/auction';
-import { Item } from '@/model/auction';
 import { auctionService } from '@/service/auctionService';
 import { useSession } from 'next-auth/react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,37 +17,39 @@ const AuctionPage: React.FC = (props) => {
 	const itemsState = useSelector(
 		(state: RootState) => state.auctionItem.items
 	);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
 
 	const isFirstFetched = useSelector(
 		(state: RootState) => state.auctionItem.isFirstFetched
 	);
 
-	const fetchItems = async () => {
-		if (status === 'authenticated') {
-			const token = (session!.user as any).token;
-			try {
-				const items = await auctionService.getAllAuctions(token);
-				dispatch(auctionItemActions.fillItems({ items: items }));
-				setShowError(false);
-			} catch (error: any) {
-				setShowError(true);
-			}
-		}
-	};
-
-	if (isFirstFetched) {
-		fetchItems();
-	}
+	// if (isFirstFetched) {
+	// 	fetchItems();
+	// }
 
 	useEffect(() => {
+		const fetchItems = async () => {
+			if (status === 'authenticated') {
+				const token = (session!.user as any).token;
+				try {
+					const items = await auctionService.getAllAuctions(token);
+					dispatch(auctionItemActions.fillItems({ items: items }));
+					setShowError(false);
+				} catch (error: any) {
+					setShowError(true);
+				}
+			}
+		};
+
 		const interval = setInterval(async () => {
 			fetchItems();
+			setIsLoading(false)
 		}, 2000);
 
 		return () => {
 			clearInterval(interval);
 		};
-	}, [status, dispatch]);
+	}, [dispatch, status, isLoading]);
 
 	if (showError) {
 		return <Error />;
@@ -56,8 +57,8 @@ const AuctionPage: React.FC = (props) => {
 
 	return (
 		<section className="container mx-auto" suppressHydrationWarning>
-			<h1 className='h2 mb-5'>Public Auction</h1>
-			<Auction items={itemsState} />
+			<h1 className="h2 mb-5">Public Auction</h1>
+			<Auction items={itemsState} isLoading={isLoading}/>
 		</section>
 	);
 };
