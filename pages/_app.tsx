@@ -5,6 +5,7 @@ import { SessionProvider } from 'next-auth/react';
 import { Provider } from 'react-redux';
 import { store } from '@/store';
 import Head from 'next/head';
+import ErrorBoundery from './components/error/errorBoundery';
 
 export default function App({ Component, pageProps }: AppProps) {
 	return (
@@ -13,14 +14,13 @@ export default function App({ Component, pageProps }: AppProps) {
 				<Head>
 					<title>Simple Auction</title>
 					<meta name="viewport" content="" />
-					<meta
-						name="description"
-						content="A simple auction site."
-					/>
+					<meta name="description" content="A simple auction site." />
 				</Head>
-				<Layout>
-					<Component {...pageProps} />
-				</Layout>
+				<ErrorBoundery fallback={<p>Something went wrong!</p>}>
+					<Layout>
+						<Component {...pageProps} />
+					</Layout>
+				</ErrorBoundery>
 			</Provider>
 		</SessionProvider>
 	);
