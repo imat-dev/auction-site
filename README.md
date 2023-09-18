@@ -2,6 +2,14 @@
 The Auction System is an intuitive online platform that facilitates the dynamic listing and bidding of items. Users can effortlessly list auction items, set starting prices, and define auction durations. Bidders, in turn, engage in real-time competitive bidding, ensuring they always stay above the last highest bid. This platform exemplifies a seamless integration of user experience and robust functionality. This project was developed as part of my technical assessment for Jitera.
 
 
+## 🌐 Website URL
+
+You can access the aucton site through the following base URL:
+
+**🔗 [https://auction-site-six.vercel.app/](https://auction-site-six.vercel.app/)**
+
+
+
 ---
 
 # Table of Contents
