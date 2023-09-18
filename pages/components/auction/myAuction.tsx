@@ -9,7 +9,7 @@ const MyAuction: React.FC<{ items: Item[] }> = (props) => {
 
 	const draftItem = props.items.filter((item) => item.status === 'draft');
 
-	const publisedItem = props.items.filter(
+	const publisedItem =  props.items.filter(
 		(item) => item.status === 'published'
 	);
 
