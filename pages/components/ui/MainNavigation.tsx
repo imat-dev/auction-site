@@ -12,9 +12,9 @@ const MainNavigation = () => {
 		<>
 			<motion.header className="bg-yellow  w-full top-0  rounded-br-[3.125rem] z-10">
 				<div className="container">
-					<div className="flex justify-between items-center py-[1.19rem] px-[1.87rem]">
+					<div className="flex justify-between items-center md:py-[1.19rem] md:px-[1.87rem] py-[1rem]">
 						<Link href="/" className="text-brown">
-							<h1 className="text-2xl font-bold">AUCTION</h1>
+							<h1 className="md:text-2xl text-[1rem] font-bold">AUCTION</h1>
 						</Link>
 						{session.status === 'authenticated' && (
 							<motion.div className="flex items-center gap-2 cursor-pointer">

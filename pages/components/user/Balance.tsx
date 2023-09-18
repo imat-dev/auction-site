@@ -33,7 +33,7 @@ const Balance = () => {
 	}, []);
 
 	return (
-		<button className="font-bold btn-pill text-lg">B: ${user.balance}</button>
+		<button className="font-bold btn-pill md:text-lg text-sm">B: ${user.balance}</button>
 	);
 };
 
