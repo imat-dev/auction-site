@@ -18,21 +18,22 @@ import { useRouter } from 'next/router';
 
 const DropdownMenu = () => {
 	const [modalContent, setModalCotnent] = useState(<DepositForm />);
-	const router = useRouter()
+	const router = useRouter();
 	const dispatch = useDispatch();
 	const showModal = useSelector((state: RootState) => state.ui.showModal);
+	const modalName = useSelector((state: RootState) => state.ui.modalName);
 
 	const logoutHandler = () => {
 		signOut();
 	};
 
 	const depositModalHandler = () => {
+		dispatch(uiActions.setModalToShow({ modalName: 'deposit' }));
 		dispatch(uiActions.toggleModal());
-		setModalCotnent(<DepositForm />);
 	};
 	const addItemModalHandler = () => {
+		dispatch(uiActions.setModalToShow({ modalName: 'createItem' }));
 		dispatch(uiActions.toggleModal());
-		setModalCotnent(<AddItemForm />);
 	};
 
 	return (
@@ -49,7 +50,11 @@ const DropdownMenu = () => {
 				<DropdownMenuItem onClick={addItemModalHandler}>
 					Create Item
 				</DropdownMenuItem>
-				<DropdownMenuItem onClick={() => { router.push('/my-items') }}>
+				<DropdownMenuItem
+					onClick={() => {
+						router.push('/my-items');
+					}}
+				>
 					My Items
 				</DropdownMenuItem>
 				<DropdownMenuItem onClick={logoutHandler}>
@@ -61,7 +66,8 @@ const DropdownMenu = () => {
 				isOpen={showModal}
 				onClose={() => dispatch(uiActions.toggleModal())}
 			>
-				{modalContent}
+				{modalName === 'deposit' && <DepositForm />}
+				{modalName === 'createItem' && <AddItemForm />}
 			</Modal>
 		</Menu>
 	);

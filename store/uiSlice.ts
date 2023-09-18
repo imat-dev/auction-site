@@ -2,10 +2,12 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface Ui {
 	showModal: boolean;
+	modalName: string;
 }
 
 const initialState: Ui = {
 	showModal: false,
+	modalName: 'deposit',
 };
 
 const uiSlice = createSlice({
@@ -14,6 +16,12 @@ const uiSlice = createSlice({
 	reducers: {
 		toggleModal: (state) => {
 			state.showModal = !state.showModal;
+		},
+		setModalToShow: (
+			state,
+			action: PayloadAction<{ modalName: string }>
+		) => {
+			state.modalName = action.payload.modalName;
 		},
 	},
 });
