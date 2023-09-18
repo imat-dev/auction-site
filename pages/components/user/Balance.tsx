@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { userActions } from '@/store/userSlice';
+import { uiActions } from '@/store/uiSlice';
 
 const Balance = () => {
 	const { data: session, status } = useSession();
@@ -32,8 +33,13 @@ const Balance = () => {
 		fetchUser();
 	}, []);
 
+	const depositHandler = () => {
+		dispatch(uiActions.setModalToShow({modalName: 'deposit'}))
+		dispatch(uiActions.toggleModal())
+	}
+
 	return (
-		<button className="font-bold btn-pill md:text-lg text-sm">B: ${user.balance}</button>
+		<button className="font-bold btn-pill md:text-lg text-sm" onClick={depositHandler}>B: ${user.balance}</button>
 	);
 };
 
