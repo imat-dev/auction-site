@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { auctionItemActions } from '@/store/auctionItemSlice';
 import { RootState } from '@/store';
 import Error from './components/ui/Error';
+import { useRouter } from 'next/router';
 
 const AuctionPage: React.FC = (props) => {
 	const { data: session, status } = useSession();
@@ -18,14 +19,7 @@ const AuctionPage: React.FC = (props) => {
 		(state: RootState) => state.auctionItem.items
 	);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-
-	const isFirstFetched = useSelector(
-		(state: RootState) => state.auctionItem.isFirstFetched
-	);
-
-	// if (isFirstFetched) {
-	// 	fetchItems();
-	// }
+	const router = useRouter();
 
 	useEffect(() => {
 		const fetchItems = async () => {
@@ -43,45 +37,52 @@ const AuctionPage: React.FC = (props) => {
 
 		const interval = setInterval(async () => {
 			fetchItems();
-			setIsLoading(false)
+			setIsLoading(false);
 		}, 2000);
 
 		return () => {
 			clearInterval(interval);
 		};
-	}, [dispatch, status, isLoading]);
+	}, [dispatch, status, isLoading, session]);
 
 	if (showError) {
 		return <Error />;
 	}
 
+	if (status === 'unauthenticated') {
+		router.push('/');
+		return(<p>You are not allowed to view this page.</p>)
+	}
+
 	return (
-		<section className="container mx-auto" suppressHydrationWarning>
+		<section className="container mx-auto">
 			<h1 className="h2 mb-5">Public Auction</h1>
-			<Auction items={itemsState} isLoading={isLoading}/>
+			{itemsState && (
+				<Auction items={itemsState} isLoading={isLoading} />
+			)}
 		</section>
 	);
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-	const session = await getServerSession(
-		context.req,
-		context.res,
-		authOptions
-	);
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+// 	const session = await getServerSession(
+// 		context.req,
+// 		context.res,
+// 		authOptions
+// 	);
 
-	if (!session) {
-		return {
-			redirect: {
-				destination: '/',
-				permanent: false,
-			},
-		};
-	}
+// 	if (!session) {
+// 		return {
+// 			redirect: {
+// 				destination: '/',
+// 				permanent: false,
+// 			},
+// 		};
+// 	}
 
-	return {
-		props: {},
-	};
-};
+// 	return {
+// 		props: {},
+// 	};
+// };
 
 export default AuctionPage;

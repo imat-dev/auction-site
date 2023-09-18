@@ -6,8 +6,9 @@ import { useSession } from 'next-auth/react';
 
 const Auction: React.FC<{ items: Item[], isLoading: boolean }> = (props) => {
 	const [activeTab, setActiveTab] = useState<string>('ongoing');
-	const { data: session, status } = useSession();
 
+
+	console.log(props.items);
 	const publisedItem = props.items.filter(
 		(item) => item.status === 'published'
 	);
@@ -51,7 +52,7 @@ const Auction: React.FC<{ items: Item[], isLoading: boolean }> = (props) => {
 
 			{activeTab === 'ongoing' && (
 				<AuctionTableLayout>
-					{props.isLoading && !publisedItem.length && <p>Loading records...</p>}
+					{props.isLoading && <p>Loading records...</p>}
 					{!publisedItem.length && !props.isLoading && <p>No records found.</p>}
 					{publisedItem.map((item) => (
 						<AuctionItem key={item.id} item={item} />
