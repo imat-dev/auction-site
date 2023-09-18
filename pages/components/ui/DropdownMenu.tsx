@@ -24,7 +24,9 @@ const DropdownMenu = () => {
 	const modalName = useSelector((state: RootState) => state.ui.modalName);
 
 	const logoutHandler = () => {
-		signOut();
+		signOut({
+			callbackUrl : '/'
+		});
 	};
 
 	const depositModalHandler = () => {
