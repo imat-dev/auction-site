@@ -107,6 +107,7 @@ const BidForm: React.FC<{ item: Item; onCloseModal: any }> = (props) => {
 
 	const showDepositModalHandler = () => {
 		props.onCloseModal();
+		dispatch(uiActions.setModalToShow({ modalName: 'deposit' }));
 		dispatch(uiActions.toggleModal());
 	};
 
