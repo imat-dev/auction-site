@@ -15,6 +15,18 @@ class AuctionService {
             handleError(error)
         }
     }
+
+    public async getAllAuctionsByUser(token: string) {
+        try {
+            const { data } = await apiClient.get('auction/my-items', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            return data;
+        } catch (error) {
+            handleError(error)
+        }
+    }
 }
 
 export const auctionService = new AuctionService();

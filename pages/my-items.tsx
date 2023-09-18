@@ -7,14 +7,13 @@ import Error from './components/ui/Error';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { auctionService } from '@/service/auctionService';
-
+import Loading from './components/ui/Loading';
 
 const MyItemsPage: React.FC = (props) => {
-
 	const { data: session, status } = useSession();
 	const [showError, setShowError] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [myItems, setMyItems] = useState([])
+	const [myItems, setMyItems] = useState<Item[]>([]);
 	const router = useRouter();
 
 	useEffect(() => {
@@ -22,9 +21,9 @@ const MyItemsPage: React.FC = (props) => {
 			if (status === 'authenticated') {
 				const token = (session!.user as any).token;
 				try {
-					const items = await auctionService.getAllAuctions(token);
+					const items = await auctionService.getAllAuctionsByUser(token);
 					setShowError(false);
-					setMyItems(items)
+					setMyItems(items);
 				} catch (error: any) {
 					setShowError(true);
 				}
@@ -47,17 +46,19 @@ const MyItemsPage: React.FC = (props) => {
 
 	if (status === 'unauthenticated') {
 		router.push('/');
-		return(<p>You are not allowed to view this page.</p>)
+		return <p>You are not allowed to view this page.</p>;
+	}
+
+	if (isLoading) {
+		return <Loading />
 	}
 
 	return (
-		<section className="container">
-			<MyAuction items={myItems} />
-		</section>
+		<section className="container">{<MyAuction items={myItems} />}</section>
 	);
 };
 
-export default  MyItemsPage;
+export default MyItemsPage;
 
 // export const getServerSideProps: GetServerSideProps = async (context) => {
 // 	const session = await getServerSession(
@@ -97,4 +98,3 @@ export default  MyItemsPage;
 // 		};
 // 	}
 // };
-

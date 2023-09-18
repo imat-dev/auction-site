@@ -102,10 +102,16 @@ const BidForm: React.FC<{ item: Item; onCloseModal: any }> = (props) => {
 		};
 
 		fetchCurrentBid();
-	}, [currentBid, props.item.id]);
+	}, [currentBid]);
+
+
+
+	if (!props.hasOwnProperty('item')) {
+		return <p>Loading...</p>
+	}
 
 	return (
-		<div className="w-full">
+		<div className="w-full min-[640px]">
 			<h1 className="text-left font-bold text-4xl mb-5">
 				{props.item.name} (${props.item.highestBid})
 			</h1>
