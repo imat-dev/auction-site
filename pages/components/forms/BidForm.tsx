@@ -7,6 +7,7 @@ import { RootState } from '@/store';
 import { Bid, Item } from '@/model/auction';
 import { bidService } from '@/service/bidService';
 import { userActions } from '@/store/userSlice';
+import { uiActions } from '@/store/uiSlice';
 
 const BidForm: React.FC<{ item: Item; onCloseModal: any }> = (props) => {
 	const [formErrorMsg, setFormErrorMsg] = useState<string | null>(null);
@@ -15,7 +16,7 @@ const BidForm: React.FC<{ item: Item; onCloseModal: any }> = (props) => {
 	const [currentBid, setCurrentBid] = useState<Bid>();
 	const dispatch = useDispatch();
 	const { data: session, status } = useSession();
-	const showFormError = formErrorMsg !== '';
+	const showFormError = formErrorMsg !== null;
 
 	const {
 		enteredValue: enteredAmount,
@@ -104,11 +105,16 @@ const BidForm: React.FC<{ item: Item; onCloseModal: any }> = (props) => {
 		fetchCurrentBid();
 	}, [currentBid]);
 
-
+	const showDepositModalHandler = () => {
+		props.onCloseModal();
+		dispatch(uiActions.toggleModal());
+	};
 
 	if (!props.hasOwnProperty('item')) {
-		return <p>Loading...</p>
+		return <p>Loading...</p>;
 	}
+
+	console.log(showFormError);
 
 	return (
 		<div className="w-full min-[640px]">
@@ -123,9 +129,17 @@ const BidForm: React.FC<{ item: Item; onCloseModal: any }> = (props) => {
 
 			<form onSubmit={bidHandler} className="">
 				{showFormError && (
-					<p className="text-red-500 text-md italic mb-2">
-						{formErrorMsg}
-					</p>
+					<>
+						<p className="text-red-500 text-md italic mb-2">
+							{formErrorMsg}
+						</p>
+						<button
+							className="btn-orange mb-5"
+							onClick={showDepositModalHandler}
+						>
+							Deposit Here
+						</button>
+					</>
 				)}
 
 				{showSuccess && (
