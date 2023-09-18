@@ -17,7 +17,13 @@ const AuctionItem: React.FC<{ item: Item }> = (props) => {
 
 	// console.log(new Date().toLocaleString())
 	// console.log(new Date(props.item.dateCreated).toLocaleString())
-	console.log(props.item.dateCreated);
+
+
+
+	if (!props.hasOwnProperty('item')) {
+		return <p>Loading...</p>
+	}
+
 	let targetDate = new Date(props.item.dateCreated)
 	targetDate.setHours(targetDate.getHours() +  props.item.windowTime);
 

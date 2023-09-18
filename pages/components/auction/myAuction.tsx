@@ -4,16 +4,17 @@ import AuctionItem from './auctionItem';
 import AuctionTableLayout from './auctionTableLayout';
 import Link from 'next/link';
 
+
 const MyAuction: React.FC<{ items: Item[] }> = (props) => {
 	const [activeTab, setActiveTab] = useState<string>('draft');
 
-	const draftItem = props.items.filter((item) => item.status === 'draft');
+	const draftItem = (props.items || []).filter((item) => item.status === 'draft');
 
-	const publisedItem =  props.items.filter(
+	const publisedItem =  (props.items || []).filter(
 		(item) => item.status === 'published'
 	);
 
-	const completedItem = props.items.filter(
+	const completedItem = (props.items || []).filter(
 		(item) => item.status === 'completed'
 	);
 

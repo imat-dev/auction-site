@@ -10,6 +10,7 @@ import { auctionItemActions } from '@/store/auctionItemSlice';
 import { RootState } from '@/store';
 import Error from './components/ui/Error';
 import { useRouter } from 'next/router';
+import Loading from './components/ui/Loading';
 
 const AuctionPage: React.FC = (props) => {
 	const { data: session, status } = useSession();
@@ -29,6 +30,7 @@ const AuctionPage: React.FC = (props) => {
 					const items = await auctionService.getAllAuctions(token);
 					dispatch(auctionItemActions.fillItems({ items: items }));
 					setShowError(false);
+					setIsLoading(false);
 				} catch (error: any) {
 					setShowError(true);
 				}
@@ -51,15 +53,17 @@ const AuctionPage: React.FC = (props) => {
 
 	if (status === 'unauthenticated') {
 		router.push('/');
-		return(<p>You are not allowed to view this page.</p>)
+		return <p>You are not allowed to view this page.</p>;
+	}
+
+	if (isLoading) {
+		return <Loading />
 	}
 
 	return (
 		<section className="container mx-auto">
 			<h1 className="h2 mb-5">Public Auction</h1>
-			{itemsState && (
-				<Auction items={itemsState} isLoading={isLoading} />
-			)}
+			<Auction items={itemsState} isLoading={isLoading} />
 		</section>
 	);
 };
