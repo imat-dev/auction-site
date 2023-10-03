@@ -12,6 +12,7 @@ export interface Item {
 	status: 'published' | 'draft' | 'completed';
 	highestBid: number;
 	dateCreated: Date;
+	auctionStartDate: Date
 	// highestBidder: User;
 }
 
