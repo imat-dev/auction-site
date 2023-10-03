@@ -15,16 +15,12 @@ const AuctionItem: React.FC<{ item: Item }> = (props) => {
 		setShowModal(false);
 	};
 
-	// console.log(new Date().toLocaleString())
-	// console.log(new Date(props.item.dateCreated).toLocaleString())
-
-
 
 	if (!props.hasOwnProperty('item')) {
 		return <p>Loading...</p>
 	}
 
-	let targetDate = new Date(props.item.dateCreated)
+	let targetDate = new Date(props.item.auctionStartDate)
 	targetDate.setHours(targetDate.getHours() +  props.item.windowTime);
 
 	return (
@@ -33,8 +29,8 @@ const AuctionItem: React.FC<{ item: Item }> = (props) => {
 			<li className="flex-1">${props.item.highestBid}</li>
 			<li className="flex-1">
 				{/* {props.item.windowTime}hr(s) */}
-				
-				<Countdown targetDate={targetDate.toISOString()} />
+				{props.item.status === 'draft' || props.item.status === 'completed' && `${props.item.windowTime} hr(s)`} 
+				{props.item.status === 'published' && <Countdown targetDate={targetDate.toISOString()} />}
 			</li>
 			<li className="flex-1">
 				{props.item.status === 'draft' && (
